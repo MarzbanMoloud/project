@@ -18,9 +18,12 @@ Route::get('/', function () {
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-    Route::get('question', 'User\QuestionController@index')->name('questions');
-    Route::post('save', 'User\QuestionController@store')->name('saveQuestion');
-    Route::get('edit/{question}', 'User\QuestionController@edit')->name('editQuestion');
+Route::get('question', 'User\QuestionController@index')->name('questions');
+Route::post('save', 'User\QuestionController@store')->name('saveQuestion');
+Route::get('edit/{question}', 'User\QuestionController@edit')->name('editQuestion');
 
 
 
+Route::get('questionList', 'Manager\AnswerController@index')->name('questionList');
+Route::post('saveAnswer', 'Manager\AnswerController@store')->name('saveAnswer');
+Route::get('removeQuestion/{question}', 'Manager\AnswerController@remove')->name('removeQuestion');

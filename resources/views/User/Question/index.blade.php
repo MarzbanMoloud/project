@@ -59,10 +59,10 @@
                     <td> {{ $value->description }} </td>
                     <td> {{ $value->user['name'] }} </td>
 
-                    @if(isset($value->answers) and $value->answers != [])
-                        <td> {{ 'ندارد' }} </td>
+                    @if(isset($value->answers[0]) and $value->answers != [])
+                        <td> {{ $value->answers[0]->description }} </td>
                     @else
-                        <td> {{ $value->answers['description'] }} </td>
+                        <td> {{ '-' }} </td>
                     @endif
 
                     <td>

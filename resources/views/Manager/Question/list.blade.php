@@ -1,98 +1,94 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+    <title>Laravel</title>
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 
-            .full-height {
-                height: 100vh;
-            }
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+</head>
+<body style="direction: rtl">
+<div>
+    <table class="table" >
+        <tr>
+            <th style="text-align: right">شناسه</th>
+            <th style="text-align: right">عنوان سوال</th>
+            <th style="text-align: right">متن سوال</th>
+            <th style="text-align: right">کاربر</th>
+            <th style="text-align: right">پاسخ</th>
+            <th style="text-align: right">عملیات</th>
+        </tr>
+        @forelse($questions as $key => $value)
+            <tr>
+                <td> {{$value->id}} </td>
+                <td> {{ $value->title }} </td>
+                <td> {{ $value->description }} </td>
+                <td> {{ $value->user['name'] }} </td>
+                @if(isset($value->answers[0]) and $value->answers != [])
+                    <td> {{ $value->answers[0]->description }} </td>
+                @else
+                    <td> {{ '-' }} </td>
+                @endif
+                <td>
+                    <button class="btn btn-info btn-sm reply" data-id="{{ $value->id }}">پاسخ</button>
+                    <a href="removeQuestion/{{ $value->id }}"><button class="btn btn-danger btn-sm">حذف</button></a>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td>{{ 'موردی یافت نشد' }}</td>
+            </tr>
+        @endforelse
+    </table>
+</div>
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
+<!-- Modal -->
+<div class="modal fade" id="answerModal" role="dialog">
+    <form action="{{ route('saveAnswer') }}" method="POST">
+        @csrf
+        <input type="hidden" id="question_id" name="question_id" value="">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">پاسخ</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-            @endif
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title">عنوان پاسخ</label>
+                        <input type="text" class="form-control" name="title">
+                    </div>
 
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
+                    <div class="form-group">
+                        <label for="title">متن پاسخ</label>
+                        <textarea class="form-control" name="description" id="description" cols="30" rows="3"></textarea>
+                    </div>
                 </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="ارسال">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">انصراف</button>
                 </div>
             </div>
         </div>
-    </body>
+    </form>
+</div>
+
+<script>
+    $('.reply').on('click' , function () {
+        var id = $(this).attr('data-id');
+        $('#question_id').val(id);
+        console.log(id);
+        $('#answerModal').modal('show');
+    })
+</script>
+</body>
 </html>
