@@ -17,7 +17,7 @@
     </head>
     <body style="direction: rtl">
        <div>
-           <form action="{{ route('saveQuestion') }}" method="POST">
+           <form action="{{ route('saveQuestion') }}" method="POST" enctype="multipart/form-data">
 
                <input type="hidden" name="question_id" value="{{ isset($question) ? $question['id'] : null }}">
                @csrf
@@ -33,6 +33,16 @@
                        {{ isset($question) ? $question['description'] : old('description') }}
                    </textarea>
                </div>
+
+               <div class="form-group">
+                   <input type="file" name="image">
+               </div>
+
+               @if(isset($question))
+                   <div class="form-group">
+                       <img src="{{ asset($question->image['path']) }}" alt="" style="width: 30px; height: 30px">
+                   </div>
+               @endif
 
                @role('user')
                    <div class="form-group">
@@ -50,6 +60,7 @@
                 <th style="text-align: right">متن سوال</th>
                 <th style="text-align: right">کاربر</th>
                 <th style="text-align: right">پاسخ</th>
+                <th style="text-align: right">عکس</th>
                 <th style="text-align: right">عملیات</th>
             </tr>
             @forelse($questions as $key => $value)
@@ -60,7 +71,17 @@
                     <td> {{ $value->user['name'] }} </td>
 
                     @if(isset($value->answers[0]) and $value->answers != [])
-                        <td> {{ $value->answers[0]->description }} </td>
+                        <td>
+                            <a href="/answersList/{{ $value->id }}"><button class="btn btn-success btn-sm">مشاهده پاسخ ها</button></a>
+                        </td>
+                    @else
+                        <td> {{ '-' }} </td>
+                    @endif
+
+                    @if(isset($value->image) and $value->image != '')
+                        <td>
+                            <img src="{{ asset($value->image['path']) }}" alt="" style="width: 30px; height: 30px">
+                        </td>
                     @else
                         <td> {{ '-' }} </td>
                     @endif

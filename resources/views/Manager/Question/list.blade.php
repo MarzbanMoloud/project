@@ -24,19 +24,31 @@
             <th style="text-align: right">متن سوال</th>
             <th style="text-align: right">کاربر</th>
             <th style="text-align: right">پاسخ</th>
+            <th style="text-align: right">عکس</th>
             <th style="text-align: right">عملیات</th>
         </tr>
         @forelse($questions as $key => $value)
             <tr>
-                <td> {{$value->id}} </td>
+                <td> {{ $value->id }} </td>
                 <td> {{ $value->title }} </td>
                 <td> {{ $value->description }} </td>
                 <td> {{ $value->user['name'] }} </td>
                 @if(isset($value->answers[0]) and $value->answers != [])
-                    <td> {{ $value->answers[0]->description }} </td>
+                    <td>
+                        <a href="answers/{{ $value->id }}"><button class="btn btn-success btn-sm">مشاهده پاسخ ها</button></a>
+                    </td>
                 @else
                     <td> {{ '-' }} </td>
                 @endif
+
+                @if(isset($value->image) and $value->image != '')
+                    <td>
+                        <img src="{{ asset($value->image['path']) }}" alt="" style="width: 30px; height: 30px">
+                    </td>
+                @else
+                    <td> {{ '-' }} </td>
+                @endif
+                
                 <td>
                     <button class="btn btn-info btn-sm reply" data-id="{{ $value->id }}">پاسخ</button>
                     <a href="removeQuestion/{{ $value->id }}"><button class="btn btn-danger btn-sm">حذف</button></a>
@@ -52,7 +64,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="answerModal" role="dialog">
-    <form action="{{ route('saveAnswer') }}" method="POST">
+    <form action="{{ route('saveAnswer') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" id="question_id" name="question_id" value="">
         <div class="modal-dialog">
@@ -71,6 +83,10 @@
                     <div class="form-group">
                         <label for="title">متن پاسخ</label>
                         <textarea class="form-control" name="description" id="description" cols="30" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="file" name="image">
                     </div>
                 </div>
                 <div class="modal-footer">

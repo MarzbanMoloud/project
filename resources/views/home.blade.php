@@ -17,7 +17,15 @@
                     You are logged in!
 
                         <br>
-                        <a href="{{ route('questions') }}">ایجاد سوال</a>
+                        @role('user')
+                            <a href="{{ route('questions') }}">پنل کاربر</a>
+                        @endrole
+
+                        <br>
+
+                        @role('admin')
+                        <a href="{{ route('questionList') }}">پنل مدیریت</a>
+                        @endrole
                 </div>
             </div>
         </div>
